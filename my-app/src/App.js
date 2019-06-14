@@ -14,8 +14,9 @@ import Chatpage from './components/chatpage';
 function App() {
   return (
     <div >
-     
-     <Router>
+     {/* <Dashboard></Dashboard> */}
+     <Dashboard></Dashboard>
+     {/* <Router>
      <Switch>
      <Route path = "/" exact component={Login}/>
      <Route path = "/signup" component={Signup}/>
@@ -24,7 +25,7 @@ function App() {
      </Switch>
      
 
-       </Router>
+       </Router> */}
     </div>
   );
 }

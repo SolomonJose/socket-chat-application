@@ -11,10 +11,10 @@ const port = process.env.PORT || 5000;
 
 
 
-app.get('/api/users',(req,res)=>{
-
-     const users = [{name: "Donald"},{ name: "Solomon" }]
-    res.json(users)
+app.get('/login',(req,res)=>{
+    console.log(req.body.username)
+    console.log(req.body.password)
+     
 });
 
 
