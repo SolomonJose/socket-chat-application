@@ -9,7 +9,7 @@
     </head>
 <body>
 <div  class="chat_window">
-    <text id = "user" style="visibility: hidden;">{{username}}</text>
+    <text id = "from" style="visibility: hidden;">{{from}}</text>
     
     <div  class="top_menu">
     <!-- <div  class="buttons"> -->
@@ -17,15 +17,16 @@
     <div  class="button minimize"></div>
     <div  class="button maximize"></div> -->
 <!-- </div> -->
-    <div  class="title">{{to}} and {{username}}</div>
+    <div  class="title">{{to}}</div>
 </div>
-    <ul id="messagelist"  class="messages"></ul>
+   <ul id="messagelist"  class="messages"></ul>
 <div  class="bottom_wrapper clearfix">
     <form  id="form">
         <div  class="message_input_wrapper">
         <input  id="message"  class="message_input"  placeholder="Type your message here..."  />
         </div>
         <button  class="send_message">Send</button>
+         <input  id="roomname"  style="visibility: hidden;"  value = {{room}}></input>
     </form>
 </div>
 </div>
