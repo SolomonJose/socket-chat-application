@@ -1,43 +1,34 @@
 const express = require('express');
-var app =express();
+const path = require('path');
 
 const {users} = require('./tables/users');
 const {chat} = require('./tables/chat');
-
 //bodyparser
 const bodyParser = require('body-parser');
 // app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+//Socket module
+var socketIO = require('socket.io');  
+const http = require('http');
+var app =express();
+var server = http.createServer(app);
+var io = socketIO(server)
+
+
+
 const port = process.env.PORT || 5000;
 
+//routes
+app.get('/',(req,res)=>{
+  res.redirect(index.html)
+});
 
 
-// app.post('/login',(req,res)=>{
-//     var username = req.body.username
-//     var password = req.body.password
-
-//     let stmt = `SELECT * FROM users1 WHERE username=$1 AND password=$2`;
-//   //let todo = [req.body.username,req.body.email,req.body.password,false];
-//   users.query(stmt,[req.body.username,req.body.password],function (err, result,fields) {
-//   //  if (err) throw err;
-//     if(result[0].username ==req.body.username && result[0].password==req.body.password){
-      
-//       res.send("Logged in")
-//     }
-//     //console.log(result);
-//     //console.log(result[0].username+'hello');
-
-//     //res.render('Public/Home/Aunthentication/otp.hbs');
-//   });
-    
-
-
-
-//      res.send("LOgin not successful");
-// });
-
-
+io.on('connection',(socket)=>{
+  console.log('New user connected');
+  
+});
 
 app.post('/login',function(req,res){
     console.log(req.body)
@@ -81,25 +72,12 @@ app.post('/signup',(req,res)=>{
     });
   });
 
-//   app.post('/reply',(req,res)=>{
-//     // console.log(req.body);
-  
-//     let stmt = `INSERT into users1(email,username,password,phone) VALUES ($1,$2,$3,$4) RETURNING *`;
-//     let todo = [req.body.email,req.body.username,req.body.password,req.body.phone];
-//     users.query(stmt,todo, function (err, result) {
-//       if (err){console.log(err);}
-        
-//     console.log(req.body.email,req.body.username,req.body.password,req.body.phone)
-//       console.log("1 record inserted");
-      
-//       res.send('user signed up')
-//     });
-//   });
 
 
 
 
 
-app.listen(port,() => {
-    console.log('Server running on port 5000')
+
+server.listen(port,() => {
+  console.log('Server running on port 5000')
 });

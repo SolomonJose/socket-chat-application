@@ -1,0 +1,68 @@
+<html>
+    <head>
+
+        <title>Dashboard</title>
+        {{!-- <link  href="./css/login.css"  type="text/css"  rel="stylesheet"/> --}}
+            <link  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css"  rel="stylesheet"  id="bootstrap-css">
+
+    </head>
+    <body>
+            <form action="/openchat" method = "post">
+                    
+                  
+                    <div class="container">
+                        <label for="all" ><h2>Click on any chat and Submit</h2></label>
+                     <center><label for="previous" align = "center"><b><h3>Previously Contacted</h3></b></label></center> 
+                        {{#each prevusers}}
+
+                            
+                            <h4   class = "point" align="center" >{{user}}</h4>
+
+                           
+
+                    {{/each}}
+                  <br>
+                  <br>
+                      <center><label for="all" ><b><h3>All Users</h3></b></label></center>
+                      
+                      {{#each allusers}}
+
+                            
+                            <h4 class = "point" align="center" >{{user}}</h4>
+
+                           
+
+                      {{/each}}
+                    
+                        <br>
+                         
+                        <br>
+                        <br>
+                      <center><button class="btn-success" style="height: 30;width:250">Create a Group</button></center>
+                     
+                    </div>
+                    <input  name = "to" style = "visibility: hidden" id= "temp" value=""/>
+                    <input  name = "from" style = "visibility: hidden" id= "temp" value="{{username}}"/>
+                    <center><button type="submit" class="btn-success" style="height: 30;width:250">Submit</button></center>
+                  
+
+                  </form>
+                  <script  src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+          <script>
+              $(".point").click(function(e){
+                  var username = e.target.innerHTML
+                  $("#temp").val(username)
+                  console.log($("#temp").val())
+                 
+
+                  
+                });
+
+
+
+          </script>
+          
+
+    </body>
+</html>
