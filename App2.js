@@ -48,17 +48,33 @@ sockets.on("connection", socket => {
 
   socket.on('create', function (room) {
     socket.join(room);
-    console.log(room + ' in socket')
+    console.log('A user joined room' + room)
     roomn = room
   });
   socket.on('chat message', function (data) {
-    console.log('message:' + data.message);
+    var fromuser = data.username;
+    var touser = data.to;
+    var usermessage = data.message;
+
+    let stmt = 'insert into chatbuffer values($1,$2,$3);';
+
+    users.query(stmt, [fromuser, touser, usermessage], function (err, result) {
+      if (err) throw err;
+
+      console.log('one Chat inserted');
+    });
+
+
+
+
+
+
 
     socket.emit('received', {
       from: data.username,
       message: data.message
     });
-    console.log('This',roomn);
+    console.log('This', roomn);
     socket.broadcast.to(roomn).emit('received', {
       from: data.username,
       message: data.message
@@ -121,63 +137,63 @@ app.post('/login', function (req, res) {
   users.query(stmt, [req.body.username, req.body.password], function (err, result) {
 
 
-    if(err) throw err;
+    if (err) throw err;
 
-      if (result.rows.length == 1) {
+    if (result.rows.length == 1) {
 
-        currentuser = result.rows[0].username
-        // flag = 1
-        // ask = {currentuser : currentuser}
-        // tobj.push(ask);
-        let stmt2 = 'SELECT uto from roomtable where ufrom=$1';
-        users.query(stmt2, [currentuser], function (err, result) {
+      currentuser = result.rows[0].username
+      // flag = 1
+      // ask = {currentuser : currentuser}
+      // tobj.push(ask);
+      let stmt2 = 'SELECT uto from roomtable where ufrom=$1';
+      users.query(stmt2, [currentuser], function (err, result) {
 
-          for (i = 0; i < result.rows.length; i++) {
-            prevusers.push({user : result.rows[i].uto})
+        for (i = 0; i < result.rows.length; i++) {
+          prevusers.push({ user: result.rows[i].uto })
 
-          }
+        }
 
-          let stmt3 = 'SELECT ufrom from roomtable where uto=$1';
+        let stmt3 = 'SELECT ufrom from roomtable where uto=$1';
         users.query(stmt3, [currentuser], function (err, result) {
 
           for (i = 0; i < result.rows.length; i++) {
-            prevusers.push({user:result.rows[i].ufrom})
+            prevusers.push({ user: result.rows[i].ufrom })
 
           }
 
           let stmt4 = 'SELECT username from users1 where username!=$1';
-        users.query(stmt4, [currentuser], function (err, result) {
+          users.query(stmt4, [currentuser], function (err, result) {
 
 
-          for (i = 0; i < result.rows.length; i++) {
-            allusers.push({user : result.rows[i].username})
+            for (i = 0; i < result.rows.length; i++) {
+              allusers.push({ user: result.rows[i].username })
 
-          }
-          console.log(allusers);
-          console.log(prevusers);
-          console.log(currentuser);
+            }
+            console.log(allusers);
+            console.log(prevusers);
+            console.log(currentuser);
 
-          res.render('dashboard.hbs', {currentuser,prevusers,allusers});
+            res.render('dashboard.hbs', { currentuser, prevusers, allusers });
 
-        });
-
-        });
-
-
-
-        });
-
-
-
-      } else {
-        // flag = 0;
-       
-          res.json({
-            "error": "true",
-            "message": "Login failed ! Please register"
           });
-      }
-    
+
+        });
+
+
+
+      });
+
+
+
+    } else {
+      // flag = 0;
+
+      res.json({
+        "error": "true",
+        "message": "Login failed ! Please register"
+      });
+    }
+
 
 
   });
@@ -187,44 +203,61 @@ app.post('/login', function (req, res) {
 app.post('/openchat', (req, res) => {
   var from = req.body.from;
   var to = req.body.to;
+  console.log('From and to test:::::', from, to);
 
-  let stmt = 'SELECT roomname from roomtable where ufrom=$1 and uto=$2 or ufrom = $2  and uto=$1';
-  users.query(stmt, [from, to], function (err, result) {
-    if (err) {
-      console.log(err);
-    } else {
+  let stmt2 = 'SELECT * from chatbuffer where fromuser=$1 and touser=$2 or fromuser = $2  and touser=$1';
+  users.query(stmt2, [from, to], function (err, result) {
+    console.log(result.rows);
 
-      if (result.rows.length == 1) {
-
-        var room = result.rows[0].roomname
-        res.render('chat.hbs', {
-          room,
-          from,
-          to
-        });
+    var bufferarray = result.rows;
 
 
+
+
+
+
+
+
+    let stmt = 'SELECT roomname from roomtable where ufrom=$1 and uto=$2 or ufrom = $2  and uto=$1';
+    users.query(stmt, [from, to], function (err, result) {
+      if (err) {
+        console.log(err);
       } else {
-        var room = 'room' + from + to
-        let stmt = 'insert into roomtable values($1,$2,$3)';
-        users.query(stmt, [room, from, to], function (err, result) {
-          if (err) {
-            console.log(err);
 
-          } else {
-            res.render('chat.hbs', {
-              room,
-              from,
-              to
-            });
-          }
+        if (result.rows.length == 1) {
+          console.log('Buffer array', bufferarray);
 
-        });
+          var room = result.rows[0].roomname
+          res.render('chat.hbs', {
+            room,
+            from,
+            to,
+            bufferarray
+          });
 
+
+        } else {
+          var room = 'room' + from + to
+          let stmt = 'insert into roomtable values($1,$2,$3)';
+          users.query(stmt, [room, from, to], function (err, result) {
+            if (err) {
+              console.log(err);
+
+            } else {
+              res.render('chat.hbs', {
+                room,
+                from,
+                to
+              });
+            }
+
+          });
+
+
+        }
 
       }
-
-    }
+    });
   });
 
 
