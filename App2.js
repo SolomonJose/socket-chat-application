@@ -48,7 +48,6 @@ sockets.on("connection", socket => {
 
   socket.on('create', function (room) {
     socket.join(room);
-    console.log('A user joined room' + room)
     roomn = room
   });
   socket.on('chat message', function (data) {
@@ -61,7 +60,6 @@ sockets.on("connection", socket => {
     users.query(stmt, [fromuser, touser, usermessage], function (err, result) {
       if (err) throw err;
 
-      console.log('one Chat inserted');
     });
 
 
@@ -114,9 +112,6 @@ app.post('/signup', (req, res) => {
         console.log(err);
       }
 
-
-      console.log("1 record inserted");
-
       res.render('login.hbs')
     });
 
@@ -142,9 +137,7 @@ app.post('/login', function (req, res) {
     if (result.rows.length == 1) {
 
       currentuser = result.rows[0].username
-      // flag = 1
-      // ask = {currentuser : currentuser}
-      // tobj.push(ask);
+
       let stmt2 = 'SELECT uto from roomtable where ufrom=$1';
       users.query(stmt2, [currentuser], function (err, result) {
 
@@ -169,25 +162,17 @@ app.post('/login', function (req, res) {
               allusers.push({ user: result.rows[i].username })
 
             }
-            console.log(allusers);
-            console.log(prevusers);
-            console.log(currentuser);
-
             res.render('dashboard.hbs', { currentuser, prevusers, allusers });
 
           });
 
         });
 
-
-
       });
 
 
 
     } else {
-      // flag = 0;
-
       res.json({
         "error": "true",
         "message": "Login failed ! Please register"
@@ -203,12 +188,9 @@ app.post('/login', function (req, res) {
 app.post('/openchat', (req, res) => {
   var from = req.body.from;
   var to = req.body.to;
-  console.log('From and to test:::::', from, to);
 
   let stmt2 = 'SELECT * from chatbuffer where fromuser=$1 and touser=$2 or fromuser = $2  and touser=$1';
   users.query(stmt2, [from, to], function (err, result) {
-    console.log(result.rows);
-
     var bufferarray = result.rows;
 
 
@@ -225,7 +207,6 @@ app.post('/openchat', (req, res) => {
       } else {
 
         if (result.rows.length == 1) {
-          console.log('Buffer array', bufferarray);
 
           var room = result.rows[0].roomname
           res.render('chat.hbs', {
@@ -268,13 +249,6 @@ app.post('/openchat', (req, res) => {
 
 });
 
-app.get('/test', (req, res) => {
-
-  var roomname = 'room' + Math.floor(Math.random() * Math.floor(100))
-  console.log(roomname)
-
-
-});
 
 http.listen(port, () => {
   console.log("Running on Port: " + port);
