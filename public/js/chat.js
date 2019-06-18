@@ -2,10 +2,14 @@
 
     var  socket  =  io();
     console.log($('#roomname').val());
-    socket.emit('create',$('#roomname').val());
+
     $("form").submit(function(e) {
         e.preventDefault(); // prevents page reloading
+        socket.emit('create',$('#roomname').val());
+        console.log($('#roomname').val());
+
         socket.emit("chat message",{username :  $("#from").html(), message:  $("#message").val()});
+        
         $("#message").val("");
     });
 

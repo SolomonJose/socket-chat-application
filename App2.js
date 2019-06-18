@@ -1,12 +1,18 @@
 //require the express module
 const express = require("express");
 const app = express();
-const { users } = require('./tables/users');
-const { chat } = require('./tables/chat');
+const {
+  users
+} = require('./tables/users');
+const {
+  chat
+} = require('./tables/chat');
 const hbs = require('hbs');
 //bodyparser
 const bodyParser = require('body-parser');
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
 
 //set the express.static middleware
 app.use(express.static(__dirname + '/public'));
@@ -48,9 +54,15 @@ sockets.on("connection", socket => {
   socket.on('chat message', function (data) {
     console.log('message:' + data.message);
 
-    socket.emit('received', { from: data.username, message: data.message });
-
-    socket.broadcast.to(roomn).emit('received', { from: data.username, message: data.message });
+    socket.emit('received', {
+      from: data.username,
+      message: data.message
+    });
+    console.log('This',roomn);
+    socket.broadcast.to(roomn).emit('received', {
+      from: data.username,
+      message: data.message
+    });
     // io.to(room).emit('received',{from :data.username, message : data.message});
 
 
@@ -78,12 +90,13 @@ app.post('/signup', (req, res) => {
     console.log('Passswords dont match');
     res.render('signup.hbs');
 
-  }
-  else {
+  } else {
     let stmt = `INSERT into users1(email,username,password,phone) VALUES ($1,$2,$3,$4) RETURNING *`;
     let todo = [req.body.email, req.body.username, req.body.psw, req.body.phone];
     users.query(stmt, todo, function (err, result) {
-      if (err) { console.log(err); }
+      if (err) {
+        console.log(err);
+      }
 
 
       console.log("1 record inserted");
@@ -98,69 +111,77 @@ app.post('/login', function (req, res) {
 
   var username = req.body.username;
   var currentuser = '';
-  
+  var flag = 0;
+  var tobj = [];
+  var prevusers = [];
+  var allusers = [];
+
 
   let stmt = 'SELECT * from users1 where username=$1 and password=$2';
   users.query(stmt, [req.body.username, req.body.password], function (err, result) {
-   
 
-    if (err) {
-      console.log(err);
-    }
-    else {
-     
+
+    if(err) throw err;
+
       if (result.rows.length == 1) {
-        var prevusers = []
-        var allusers = []
-        
-       currentuser= result.rows[0].username
 
-
-
+        currentuser = result.rows[0].username
+        // flag = 1
+        // ask = {currentuser : currentuser}
+        // tobj.push(ask);
         let stmt2 = 'SELECT uto from roomtable where ufrom=$1';
         users.query(stmt2, [currentuser], function (err, result) {
 
           for (i = 0; i < result.rows.length; i++) {
-            prevusers.push(result.rows[i].uto)
+            prevusers.push({user : result.rows[i].uto})
 
           }
-        });
-        let stmt3 = 'SELECT ufrom from roomtable where uto=$1';
+
+          let stmt3 = 'SELECT ufrom from roomtable where uto=$1';
         users.query(stmt3, [currentuser], function (err, result) {
 
           for (i = 0; i < result.rows.length; i++) {
-            prevusers.push(result.rows[i].ufrom)
+            prevusers.push({user:result.rows[i].ufrom})
 
           }
 
-        });
-        console.log(prevusers)
-        let stmt4 = 'SELECT username from users1 where username!=$1';
+          let stmt4 = 'SELECT username from users1 where username!=$1';
         users.query(stmt4, [currentuser], function (err, result) {
-          console.log(allusers)
-         
+
 
           for (i = 0; i < result.rows.length; i++) {
-            allusers.push(result.rows[i].username)
+            allusers.push({user : result.rows[i].username})
 
           }
+          console.log(allusers);
+          console.log(prevusers);
+          console.log(currentuser);
+
+          res.render('dashboard.hbs', {currentuser,prevusers,allusers});
+
+        });
 
         });
 
 
-        res.render('dashboard.hbs', { currentuser, prevusers, allusers });
-      }
-      else {
-        res.json({
-          "error": "true",
-          "message": "Login failed ! Please register"
+
         });
 
-      }
 
-    }
+
+      } else {
+        // flag = 0;
+       
+          res.json({
+            "error": "true",
+            "message": "Login failed ! Please register"
+          });
+      }
+    
+
 
   });
+
 });
 
 app.post('/openchat', (req, res) => {
@@ -171,27 +192,31 @@ app.post('/openchat', (req, res) => {
   users.query(stmt, [from, to], function (err, result) {
     if (err) {
       console.log(err);
-    }
-
-    else {
+    } else {
 
       if (result.rows.length == 1) {
 
         var room = result.rows[0].roomname
-        res.render('chat.hbs', { room, from, to });
+        res.render('chat.hbs', {
+          room,
+          from,
+          to
+        });
 
 
-      }
-      else {
+      } else {
         var room = 'room' + from + to
         let stmt = 'insert into roomtable values($1,$2,$3)';
         users.query(stmt, [room, from, to], function (err, result) {
           if (err) {
             console.log(err);
 
-          }
-          else {
-            res.render('chat.hbs', { room, from, to });
+          } else {
+            res.render('chat.hbs', {
+              room,
+              from,
+              to
+            });
           }
 
         });
