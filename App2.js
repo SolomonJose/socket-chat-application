@@ -249,6 +249,56 @@ app.post('/openchat', (req, res) => {
 
 });
 
+app.post('/creategrp',(req,res)=>{
+  var username = req.body.usr
+  currentuser = username
+  console.log(req.body);
+  
+  let stmt = 'SELECT username from users1 where username!=$1';
+
+  users.query(stmt, [username], function (err, result) {
+    var allusers = [];
+    if(err) console.log( err);
+    console.log(result.rows);
+
+
+    for (i = 0; i < result.rows.length; i++) {
+      allusers.push({ user: result.rows[i].username })
+
+    }
+    console.log(allusers);
+
+
+
+
+
+
+    res.render('creategrp.hbs',{allusers,currentuser});
+
+  });
+  
+  
+  
+});
+app.post('/opengrpchat',(req,res)=>{
+  
+  var admin = req.body.from;
+  var groupname = req.body.groupname;
+
+  var members = req.body.members;
+
+  
+  
+  res.send('hello');
+
+
+  });
+  
+  
+  
+
+  
+
 
 http.listen(port, () => {
   console.log("Running on Port: " + port);

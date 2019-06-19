@@ -3,7 +3,7 @@
   }
   
   body {
-    background-color: #edeff2;
+    background-image: url('../chatback.jpg');
     font-family: "Calibri", "Roboto", sans-serif;
   }
   
@@ -198,14 +198,14 @@
   }
   
   .messages > li {
-    font-size: 15px;
-    color: rgb(13, 223, 153);
-    background: #f7a30675;
+    font-size: 20px;
+    color: rgb(9, 10, 10);
+    background: #8bfc6fa9;
     border-radius: 5px;
     width: fit-content;
   }
   
   .messages > span {
-    font-size: 10px;
+    font-size: 15px;
     font-style: italic;
   }
