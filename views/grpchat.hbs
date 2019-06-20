@@ -11,7 +11,9 @@
 
 <body >
             <text id="from" style="visibility: hidden;">{{from}}</text>
-        <text id="to" style="visibility: hidden;">{{to}}</text>
+        <text id="members" style="visibility: hidden;">{{members}}</text>
+         <text id="grpid" style="visibility: hidden;">{{id}}</text>
+
     <div class="chat_window"  >
 
 
@@ -21,11 +23,11 @@
     <div  class="button minimize"></div>
     <div  class="button maximize"></div> -->
             <!-- </div> -->
-            <div class="title" style=" font-size:40px;  color:white; font-family:serif ">{{to}}</div>
+            <div class="title" style=" font-size:40px;  color:white; font-family:serif ">{{groupname}}</div>
         </div>
         <div  >
             <ul id="messagelist" class="messages" >
-            {{#each bufferarray}}
+            {{!-- {{#each bufferarray}}
 
 
             <li>{{usermessage}}</li>
@@ -33,7 +35,7 @@
 
 
 
-            {{/each}}
+            {{/each}} --}}
         </ul>
 
 
@@ -52,7 +54,7 @@
     <script src="/js/socket.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/rexeze/formatTimeStamp/src/index.min.js"></script>
-    <script src="/js/chat.js"></script>
+    <script src="/js/grpchat.js"></script>
 </body>
 
 </html>

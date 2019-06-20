@@ -1,13 +1,13 @@
 //require the express module
 const express = require("express");
 const app = express();
-const {
-  users
-} = require('./tables/users');
-const {
-  chat
-} = require('./tables/chat');
+
+
+const { users} = require('./tables/users');
+const {chat} = require('./tables/chat');
 const hbs = require('hbs');
+
+const alert = require('alert-node');
 //bodyparser
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -37,6 +37,7 @@ app.use(bodyParser.json());
 //integrating socketio
 sockets = io(http);
 var roomn = '';
+var grproom = '';
 
 //setup event listener
 sockets.on("connection", socket => {
@@ -85,6 +86,43 @@ sockets.on("connection", socket => {
 
 
   });
+
+
+  //socket configuration for group chat
+
+  socket.on('creategrp', function (room) {
+    socket.join(room);
+    grproom = room
+
+  });
+
+  socket.on('grpchat message', function (data) {
+    var fromuser = data.username;
+    var id = data.id;
+    var usermessage = data.message;
+
+    let stmt = 'insert into groupchat values($1,$2,$3);'; //id message fromuser
+
+    users.query(stmt, [id,usermessage,fromuser], function (err, result) {
+      if (err) throw err;
+
+
+    });
+
+
+    socket.emit('grpreceived', {
+      from: data.username,
+      message: data.message
+    });
+    // console.log('This', );
+    socket.broadcast.to(grproom).emit('grpreceived', {
+      from: data.username,
+      message: data.message
+    });
+
+  });
+
+
 
 });
 
@@ -185,6 +223,9 @@ app.post('/login', function (req, res) {
 
 });
 
+
+
+
 app.post('/openchat', (req, res) => {
   var from = req.body.from;
   var to = req.body.to;
@@ -283,22 +324,161 @@ app.post('/creategrp',(req,res)=>{
 app.post('/opengrpchat',(req,res)=>{
   
   var admin = req.body.from;
+  var from = admin;
   var groupname = req.body.groupname;
+  var room = groupname + admin;
+ 
 
   var members = req.body.members;
+  members = members.slice(0,members.length-1)
+
+  var stmt = "select groupname from grouptable where groupname = $1 and admin = $2;";
+
+  users.query(stmt,[groupname,admin],function(err,result){
+
+    if(err) throw err;
+
+    if(result.rows.length > 0){
+      
+      res.json({
+
+        message : "Group name already taken!!"
+      });
+    }
+    else{
+
+      
+  var stmt = "insert into grouptable(groupname ,admin,members) values($1,$2,$3)";
+
+  users.query(stmt,[groupname,admin,members],function(err,result){
+
+    if(err) throw err;
+    var stmt2 = "select groupid from grouptable where groupname = $1 and admin = $2";
+    users.query(stmt2,[groupname,admin],function(err,result){
+
+      var id = result.rows[0].groupid;
+      console.log(id);
+
+
+      res.render('grpchat.hbs',{from,groupname,members,room,id});
+
+
+
+
+
+    });
+
+    
+    
+
+
+
+
+  });
+
+
+
+      
+
+
+    }
+
+
+
+
+  });
+
+
+
+
+
+
+  // let stmt = 'SELECT roomname from roomtable where ';
+  //   users.query(stmt, [from, to], function (err, result) {
+  //     if (err) {
+  //       console.log(err);
+  //     } else {
+
+  //       if (result.rows.length == 1) {
+
+  //         var room = result.rows[0].roomname
+  //         res.render('chat.hbs', {
+  //           room,
+  //           from,
+  //           to,
+  //           bufferarray
+  //         });
+
+
+  //       } else {
+  //         var room = 'room' + from + to
+  //         let stmt = 'insert into roomtable values($1,$2,$3)';
+  //         users.query(stmt, [room, from, to], function (err, result) {
+  //           if (err) {
+  //             console.log(err);
+
+  //           } else {
+  //             res.render('chat.hbs', {
+  //               room,
+  //               from,
+  //               to
+  //             });
+  //           }
+
+  //         });
+
+
+  //       }
+
+  //     }
+  //   });
+
+
+
+
+
 
   
   
-  res.send('hello');
+  
 
 
   });
   
+// Route for routing to already created group
   
-  
+// app.post('',{
 
-  
 
+
+// });
+  
+app.get('/landing',(req,res)=>{
+
+  let stmt = 'SELECT * from grouptable where admin!=$1'; // regex matching for members required
+
+  users.query(stmt, [username], function (err, result) {
+    var allusers = [];
+    if(err) console.log( err);
+    console.log(result.rows);
+
+
+    for (i = 0; i < result.rows.length; i++) {
+      allusers.push({ user: result.rows[i].username })
+
+    }
+    console.log(allusers);
+
+
+
+  res.render('landing.hbs',{groups});
+
+
+
+
+
+
+});
 
 http.listen(port, () => {
   console.log("Running on Port: " + port);

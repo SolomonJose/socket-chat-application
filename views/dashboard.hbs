@@ -21,56 +21,58 @@
         <label for="all" style="font-family: serif">
           <h2>Click on any chat and Submit</h2>
         </label>
-       
-            <br>
-        <br>
-            <div style="background-image:url('back.jpg'); width:50%;margin: auto; border-radius: 20px; background-opacity: 0;">
-               <center><label for="previous" align="center"><b>
-              <h3>Previously Contacted</h3>
-            </b></label></center>
-              <br>
-              <br>
-              {{#each prevusers}}
-
-
-        <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
-          class="point" align="center">{{user}}</h3>
-
-
-
-
-        {{/each}}
-        <br>
-        <br>
-
-
-
-            </div>
-        
-        <br>
-        <br>
-            <div style="background-image:url('back.jpg'); width:50%;margin: auto; border-radius: 20px; background-opacity: 0;">
-              <center><label for="all"><b>
-              <h3 >All Users</h3>
-            </b></label></center>
-              <br>
-              <br>
-
-        {{#each allusers}}
-
-
-        <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
-          class="point" align="center">{{user}}</h3>
-
-
-
-        {{/each}}
 
         <br>
-
         <br>
+        <div
+          style="background-image:url('back.jpg'); width:50%;margin: auto; border-radius: 20px; background-opacity: 0;">
+          <center><label for="previous" align="center"><b>
+                <h3>Previously Contacted</h3>
+              </b></label></center>
+          <br>
+          <br>
+          {{#each prevusers}}
+
+
+          <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
+            class="point" align="center">{{user}}</h3>
+
+
+
+
+          {{/each}}
+          <br>
+          <br>
+
+
+
         </div>
-        <br </div> <br>
+
+        <br>
+        <br>
+        <div
+          style="background-image:url('back.jpg'); width:50%;margin: auto; border-radius: 20px; background-opacity: 0;">
+          <center><label for="all"><b>
+                <h3>All Users</h3>
+              </b></label></center>
+          <br>
+          <br>
+
+          {{#each allusers}}
+
+
+          <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
+            class="point" align="center">{{user}}</h3>
+
+
+
+          {{/each}}
+
+          <br>
+
+          <br>
+        </div>
+                <br </div> <br>
         <br>
         <center><button type="submit" id="sub" class="btn-success" style="height: 30;width:250">Submit</button></center>
 
@@ -80,14 +82,15 @@
 
 
       </div>
+
     </form>
-    <form action="/creategrp" method="post">
-      <input style="visibility: hidden" name= "usr" value="{{currentuser}}"/>
-       <center><button type="submit" class="btn-success" style="height: 30;width:250" >Create Group</button></center>
+    <form action="/landing" method="post">
+      {{!-- <input style="visibility: hidden" name="usr" value="{{currentuser}}" /> --}}
+      <center><button type="submit" class="btn-success" style="height: 30;width:250">Group Chats</button></center>
 
 
     </form>
-           
+
 
 
 

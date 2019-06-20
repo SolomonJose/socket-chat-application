@@ -1,0 +1,75 @@
+<html>
+
+<head>
+
+  <title>Dashboard</title>
+  {{!-- <link  href="./css/login.css"  type="text/css"  rel="stylesheet"/> --}}
+  <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet"
+    id="bootstrap-css">
+
+</head>
+
+<body style=" background-image: url('back.jpg');background-repeat: no-repeat;
+  background-size: cover;">
+
+  <div>
+
+
+    <br>
+        <br>
+        <div
+          style="background-image:url('back.jpg'); width:50%;margin: auto; border-radius: 20px; background-opacity: 0;">
+          <center><label for="all"><b>
+                <h3>Group Chats</h3>
+              </b></label></center>
+          <br>
+          <br>
+
+          {{#each groups}}
+
+
+          <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
+            class="point" align="center">{{groupname}}</h3>
+
+
+
+          {{/each}}
+
+          <br>
+
+          <br>
+        </div>
+
+
+      {{!-- <button name = "private-chat"><a href="/privateroute">Private Chat</a></button>
+       <button name = "group-chat"><a href="/grouproute">Group Chat</a></button> --}}
+
+
+       <form action="/creategrp" method="post">
+      <input style="visibility: hidden" name="usr" value="{{currentuser}}" />
+      <center><button type="submit" class="btn-success" style="height: 30;width:250">Create Group</button></center>
+
+
+    </form>
+
+
+
+
+  </div>
+  
+
+ 
+           
+
+
+
+
+  
+  <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+
+  
+
+
+</body>
+
+</html>
