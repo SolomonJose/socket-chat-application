@@ -293,7 +293,7 @@ app.post('/openchat', (req, res) => {
 app.post('/creategrp',(req,res)=>{
   var username = req.body.usr
   currentuser = username
-  console.log(req.body);
+  console.log("Create group body"+req.body.usr);
   
   let stmt = 'SELECT username from users1 where username!=$1';
 
@@ -348,9 +348,9 @@ app.post('/opengrpchat',(req,res)=>{
     else{
 
       
-  var stmt = "insert into grouptable(groupname ,admin,members) values($1,$2,$3)";
+  var stmt = "insert into grouptable(groupname ,admin,members,roomname) values($1,$2,$3,$4)";
 
-  users.query(stmt,[groupname,admin,members],function(err,result){
+  users.query(stmt,[groupname,admin,members,room],function(err,result){
 
     if(err) throw err;
     var stmt2 = "select groupid from grouptable where groupname = $1 and admin = $2";
@@ -453,29 +453,80 @@ app.post('/opengrpchat',(req,res)=>{
 
 // });
   
-app.get('/landing',(req,res)=>{
+app.post('/landing',(req,res)=>{
+  var username = req.body.usr;
+  var currentuser = req.body.usr;
 
-  let stmt = 'SELECT * from grouptable where admin!=$1'; // regex matching for members required
+  var usernamereg = '%'+username+'%';
+  
+  console.log('Usrename console log'+username);
 
-  users.query(stmt, [username], function (err, result) {
-    var allusers = [];
-    if(err) console.log( err);
-    console.log(result.rows);
+  let stmt = "SELECT * from grouptable where admin = $1 or members like $2"; // regex matching for members required
+  users.query(stmt, [username,usernamereg], function (err, result) {
+    if(err) throw err;
+    if(result){
 
+      console.log(result.rows);
 
-    for (i = 0; i < result.rows.length; i++) {
-      allusers.push({ user: result.rows[i].username })
 
     }
-    console.log(allusers);
+    
+
+    var groups = [];
+    // for(i = 0;i<result.rows.length;i++){
+
+    //   groups.push({
+    //     groupid : result.rows[i].groupid,
+    //     groupname : result.rows[i].groupname,
+    //     admin : result.rows[i].admin,
+    //     members : result.rows[i].members
+
+    //   });
+    
+
+
+    // }
+    groups = result.rows;
+
+  console.log(groups);
 
 
 
-  res.render('landing.hbs',{groups});
+  res.render('landing.hbs',{groups,currentuser});
 
 
 
 
+
+
+});
+});
+
+
+
+app.post('/opengroup',(req,res)=>{
+
+var groupid= req.body.groupid;
+var from = req.body.usr;
+console.log(groupid);
+
+var stmt = 'select * from grouptable where groupid = $1';
+
+users.query(stmt,[groupid],function(err,result){
+
+  var admin = result.rows[0].admin;
+  
+  var groupname = result.rows[0].groupname;
+  var room = result.rows[0].roomname;
+  var members = result.rows[0].members;
+  var id = groupid;
+
+
+
+  res.render('grpchat.hbs',{from,groupname,members,room,id});
+
+
+});
 
 
 });

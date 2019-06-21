@@ -13,8 +13,9 @@
   background-size: cover;">
 
   <div>
+    
 
-
+      
     <br>
         <br>
         <div
@@ -29,7 +30,8 @@
 
 
           <h3 style="background :rgba(21, 77, 207, 0.502); border-radius: 20px; color:white; font-family:serif;"
-            class="point" align="center">{{groupname}}</h3>
+            class="point" align="center" id = "{{groupid}}">{{groupname}}</h3>
+
 
 
 
@@ -38,16 +40,29 @@
           <br>
 
           <br>
+          
         </div>
 
+<form action="/opengroup" method="post">
+  <input name="groupid" style="visibility: hidden" id="temp" />
+  <input style="visibility: hidden" name="usr" value="{{currentuser}}" />
 
-      {{!-- <button name = "private-chat"><a href="/privateroute">Private Chat</a></button>
-       <button name = "group-chat"><a href="/grouproute">Group Chat</a></button> --}}
+      {{!-- <button name = "private-chat"><a href="/privateroute">Private Chat</a></button> --}}
+       <button name = "group-chat" type="submit">Submit</button>
+
+
+
+
+    </form>
+
+
 
 
        <form action="/creategrp" method="post">
+        
+
       <input style="visibility: hidden" name="usr" value="{{currentuser}}" />
-      <center><button type="submit" class="btn-success" style="height: 30;width:250">Create Group</button></center>
+      <center><button type="submit" class="btn-success" style="height: 30;width:250">Create a New Group</button></center>
 
 
     </form>
@@ -66,6 +81,37 @@
 
   
   <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+  <script>
+
+    $(".point").click(function (e) {
+      $(this).css("background-color", "black");
+
+      var groupid = e.target.id
+      $("#temp").val(groupid)
+
+
+
+
+    });
+
+    $(".point").hover(function () {
+      $(this).css("background-color", "blue");
+    }, function () {
+      $(this).css("background", "#154cce80");
+    });
+
+
+    $(".point").click(function () {
+      $("#sub").css("background-color", "blueviolet");
+
+
+    });
+
+
+
+
+
+  </script>
 
   
 

@@ -2,7 +2,7 @@
 
 var socket = io();
 socket.emit('creategrp', $('#roomname').val()); //expects supplying room name from server to form
-console.log($('#roomname').val());
+console.log('Room name'+$('#roomname').val());
 
 $("form").submit(function (e) {
     e.preventDefault(); // prevents page reloading
